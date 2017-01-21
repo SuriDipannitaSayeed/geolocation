@@ -89,6 +89,8 @@ public class MainActivity extends FragmentActivity implements OnTimeChangedListe
 	CalendarView view;
 	Button b1;
 	JSONArray ja;
+	   public static  TextView tv;
+	public static String username;
 		   public ArrayList<String> position = new ArrayList<String>(); // Member
 	public static ArrayList<String> dictionary = new ArrayList();
 	public  static ArrayList<ListModel> CustomListViewValuesArr = new ArrayList<ListModel>();
@@ -101,6 +103,10 @@ public class MainActivity extends FragmentActivity implements OnTimeChangedListe
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		Bundle extras = getIntent().getExtras();
+		if(extras != null) { 
+		username=extras.getString("Username");
+		}
 		b1=(Button) findViewById(R.id.tasklist);
 	
 		try {
@@ -126,7 +132,7 @@ public class MainActivity extends FragmentActivity implements OnTimeChangedListe
 	
 		// Getting a reference to the map
 		googleMap = supportMapFragment.getMap();
-      
+		  googleMap.setMyLocationEnabled(true);
  			
 		
 
@@ -202,14 +208,16 @@ try {
 	int count=0;
 	for(int i=0;i<n;i++){
 		JSONObject jo=ja.optJSONObject(i);
-		if(jo.optString("asignee").equals("asad"))
-		{
+		if(jo.optString("asignee").equals(username))
+		{ 
+
 			position.add(jo.optString("Location"));
  
 	String location2 =jo.optString("Location");
-	//Location=location;
+	Location=location;
 	if(location2!=null && !location2.equals("")){
 		new GeocoderTask().execute(location2);
+	
 	}
  
  
@@ -221,7 +229,7 @@ try {
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
 			Log.d("data", ja.toString());
-			Toast.makeText(getBaseContext(), "No Location found", Toast.LENGTH_SHORT).show();
+			
 
 			Intent intent = new Intent(MainActivity.this, TaskActivity.class);
 			intent.putExtra("data", ja.toString());
@@ -265,7 +273,7 @@ try {
 				
 				try {
 					// Getting a maximum of 3 Address that matches the input text
-					addresses = geocoder.getFromLocationName(locationName[0], 3);
+					addresses = geocoder.getFromLocationName(locationName[0],3);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}			
@@ -312,8 +320,11 @@ try {
 			        // Locate the first location
 			        if(i==0)			        	
 						googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13.4f));
-			    	if(markerPoints.size() >= 2){					
-						LatLng origin = markerPoints.get(0);
+			    	if(markerPoints.size() >= 2){	
+			    		 
+			    	 
+						  LatLng origin=new LatLng( googleMap.getMyLocation().getLatitude(),  googleMap.getMyLocation().getLongitude());
+						//LatLng origin = markerPoints.get(0);
 						for(int j=1;j<markerPoints.size();j++)
 						{
 							LatLng dest = markerPoints.get(j);
@@ -346,7 +357,9 @@ try {
 			
 			// Destination of route
 			String str_dest = "destination="+dest.latitude+","+dest.longitude;		
-			
+		
+			 
+			  
 						
 			// Sensor enabled
 			String sensor = "sensor=false";			
@@ -496,9 +509,11 @@ try {
 					lineOptions.color(Color.RED);	
 					
 				}
-				
+				if (lineOptions != null)
+				{
 				// Drawing polyline in the Google Map for the i-th route
-				googleMap.addPolyline(lineOptions);							
+				googleMap.addPolyline(lineOptions);	
+				}
 			}			
 	    } 
 

@@ -33,14 +33,18 @@
             android:hardwareAccelerated="true" >
             <meta-data
                 android:name="com.google.android.maps.v2.API_KEY"
-                android:value="AIzaSyCYnBSvRZ-Kfbmtys75cLt5Ig9AuD7dQLM"/>
+                android:value="AIzaSyDyQsQA99gD6kU7ioJXAY8SzLPqTWEQT9w"/>
             <meta-data
                 android:name="com.google.android.gms.version"
                 android:value="4030500" />
             <activity
                 android:name="in.wptrafficanalyzer.locationgeocodingv2.MainActivity"
                 android:label="@string/app_name" >
-               
+                <intent-filter>
+                    <action android:name="android.intent.action.MAIN" />
+
+                     <category android:name="android.intent.category.LAUNCHER" />
+                </intent-filter>
             </activity>
              <activity
                 android:name="in.wptrafficanalyzer.locationgeocodingv2.CustomListViewAndroidExample"
@@ -73,11 +77,7 @@
             <activity
                 android:name="in.wptrafficanalyzer.locationgeocodingv2.loginActivity"
                 android:label="@string/app_name" >
-                   <intent-filter>
-                    <action android:name="android.intent.action.MAIN" />
-
-                     <category android:name="android.intent.category.LAUNCHER" />
-                </intent-filter>
+                  
              
             </activity>
         </application>
