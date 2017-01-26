@@ -1,0 +1,177 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/fragment1"
+
+    android:orientation="vertical"
+    >
+
+
+    <TextView
+        android:text=" "
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/textView2" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <EditText
+            android:layout_width="255dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            android:id="@+id/id"
+            android:text=""
+            android:background="@drawable/edittextstyle"
+            android:hint="Task id"/>
+
+        <EditText
+            android:layout_width="255dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            android:id="@+id/title"
+            android:text=""
+            android:background="@drawable/edittextstyle"
+            android:hint="Title"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start"
+            android:textColor="#000000"
+            android:layout_gravity="left"
+            android:paddingRight="12dp"
+            android:textSize="15sp"
+            android:id="@+id/textView" />
+
+        <TextView
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:padding="10dp"
+            android:gravity="center"
+            android:background="@drawable/edittextview"
+            android:id="@+id/start"
+            android:text="TUESDAY,JAN 03,2017"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                android:text="End"
+                android:paddingRight="14dp"
+
+                android:layout_gravity="left"
+                android:id="@+id/textView22" />
+
+            <TextView
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:textColor="#000000"
+                android:padding="10dp"
+                android:gravity="center"
+                android:id="@+id/end"
+                android:background="@drawable/edittextview"
+
+                android:text="TUESDAY,JAN 03,2017"/>
+
+        </LinearLayout>
+
+        <EditText
+            android:layout_width="255dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            android:id="@+id/location"
+            android:text=""
+            android:background="@drawable/edittextstyle"
+            android:hint="Location"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Asignee"
+                android:textColor="#000000"
+                android:layout_gravity="left"
+                android:paddingRight="12dp"
+                android:textSize="15sp"
+                android:id="@+id/text" />
+
+            <EditText
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:textColor="#000000"
+                android:padding="10dp"
+                android:gravity="center"
+                android:background="@drawable/edittextview"
+                android:id="@+id/asignee"
+                android:text=" "/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        <Button
+            android:text="Creat Task"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="7dp"
+            android:layout_gravity="center"
+            android:id="@+id/task" />
+            <Button
+                android:text="Update Task"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:padding="7dp"
+                android:layout_gravity="center"
+                android:id="@+id/update" />
+
+            <Button
+                android:text="Logout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:padding="5dp"
+                android:layout_gravity="center"
+                android:id="@+id/logout" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

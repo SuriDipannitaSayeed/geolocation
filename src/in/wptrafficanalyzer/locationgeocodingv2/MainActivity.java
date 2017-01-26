@@ -1,11 +1,4 @@
 package in.wptrafficanalyzer.locationgeocodingv2;
-
- 
-
- 
-
- 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -114,7 +107,7 @@ public class MainActivity extends FragmentActivity implements OnTimeChangedListe
 			/**
 			 * Create a new instance of the SAX parser
 			 **/
-		String serverURL = "http://192.168.0.110/get.php";
+		String serverURL = "http://192.168.0.149/get.php";
 
             new MyAsyncTask().execute(serverURL);
 
@@ -171,7 +164,7 @@ public class MainActivity extends FragmentActivity implements OnTimeChangedListe
             // TODO Auto-generated method stub
         	 try {
         	  HttpClient client = new DefaultHttpClient();
-              HttpGet request = new HttpGet("http://192.168.0.110/get.php"); 
+              HttpGet request = new HttpGet("http://192.168.0.149/get.php"); 
                                       // replace with your url
               ResponseHandler<String> responseHandler = new BasicResponseHandler();
               
