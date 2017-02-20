@@ -28,13 +28,14 @@ public class loginActivity extends Activity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 if(uname.getText().toString().equals("admin")){
-                    Intent intent = new Intent(getBaseContext(), AdminActivity.class);
+                    Intent intent = new Intent(getBaseContext(), in.wptrafficanalyzer.locationgeocodingv2.AdminActivity.class);
                     startActivity(intent);
                 }
 
     else
                 {
-    	 Intent intent = new Intent(getBaseContext(), MainActivity.class);
+    	 Intent intent = new Intent(loginActivity.this, in.wptrafficanalyzer.locationgeocodingv2.MainActivity.class);
+    	 intent.putExtra("Username", uname.getText().toString());
          startActivity(intent);
 
                 }

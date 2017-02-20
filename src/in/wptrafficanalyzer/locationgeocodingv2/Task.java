@@ -54,11 +54,11 @@ public class Task extends Activity implements OnClickListener {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 			
- 	Intent newintent=new Intent(Task.this,TaskActivity.class);
+/* 	Intent newintent=new Intent(Task.this,TaskActivity.class);
  	newintent.putExtra("data", ja.toString());
  	newintent.putExtra("Status", "Done");
  	newintent.putExtra("id", id);
-	startActivityForResult(newintent, 1);	
+	startActivityForResult(newintent, 1);*/	
 	finish();
 			}
 		});
@@ -70,11 +70,11 @@ public class Task extends Activity implements OnClickListener {
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
 				
-					Intent newintent=new Intent(Task.this,TaskActivity.class);
+				/*	Intent newintent=new Intent(Task.this,TaskActivity.class);
 				 	newintent.putExtra("data", ja.toString());
 				 	newintent.putExtra("Status", "Cancel");
 					newintent.putExtra("id", id);
-				 	startActivityForResult(newintent, 2);
+				 	startActivityForResult(newintent, 2);*/
 					finish();
 				}
 			});

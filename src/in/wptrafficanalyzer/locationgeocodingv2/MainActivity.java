@@ -6,9 +6,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -33,13 +36,19 @@ import org.json.JSONObject;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -67,7 +76,7 @@ public class MainActivity extends FragmentActivity implements OnTimeChangedListe
 	GoogleMap googleMap;
 	final MarkerOptions markerOptions    = new MarkerOptions();
     
-	 MarkerOptions markerOptions2 ; 
+	 MarkerOptions markerOptions2=new MarkerOptions(); ; 
 	LatLng latLng;
 	int hour ;
 	int minute  ;
@@ -88,17 +97,26 @@ public class MainActivity extends FragmentActivity implements OnTimeChangedListe
 	public static ArrayList<String> dictionary = new ArrayList();
 	public  static ArrayList<ListModel> CustomListViewValuesArr = new ArrayList<ListModel>();
 	ArrayList<XMLGettersSettersClass> mdataent = new ArrayList<XMLGettersSettersClass>();
-
+    private Handler mUiHandler = new Handler();
 	ArrayList<LatLng> markerPoints = new ArrayList<LatLng>();
-
+//	ArrayList<Long> distance = new ArrayList<Long>()  ;
+	  HashMap<Integer,Long> distance=new HashMap<Integer,Long>();
+	int[] dist;
 	 TimePickerDialog.OnTimeSetListener timePickerListener;
+	 int k=0;
+	 LatLng origin;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+	
+		
 		Bundle extras = getIntent().getExtras();
+		
 		if(extras != null) { 
 		username=extras.getString("Username");
+		username.replaceAll("\\s+","");
+		Log.d("username", username);
 		}
 		b1=(Button) findViewById(R.id.tasklist);
 	
@@ -107,7 +125,7 @@ public class MainActivity extends FragmentActivity implements OnTimeChangedListe
 			/**
 			 * Create a new instance of the SAX parser
 			 **/
-		String serverURL = "http://192.168.0.149/get.php";
+		String serverURL = "http://172.20.62.23/get.php";
 
             new MyAsyncTask().execute(serverURL);
 
@@ -124,11 +142,10 @@ public class MainActivity extends FragmentActivity implements OnTimeChangedListe
 			
 	
 		// Getting a reference to the map
-		googleMap = supportMapFragment.getMap();
+		  googleMap = supportMapFragment.getMap();
 		  googleMap.setMyLocationEnabled(true);
  			
 		
-
 
 		// Getting reference to btn_find of the layout activity_main
     
@@ -158,13 +175,18 @@ public class MainActivity extends FragmentActivity implements OnTimeChangedListe
  
 
     private class MyAsyncTask extends AsyncTask<String,Void, Void> {
-
+@Override
+protected void onPreExecute() {
+	// TODO Auto-generated method stub
+	super.onPreExecute();
+	 
+}
         @Override
         protected Void doInBackground(String... params) {
             // TODO Auto-generated method stub
         	 try {
         	  HttpClient client = new DefaultHttpClient();
-              HttpGet request = new HttpGet("http://192.168.0.149/get.php"); 
+              HttpGet request = new HttpGet("http://172.20.62.23/get.php"); 
                                       // replace with your url
               ResponseHandler<String> responseHandler = new BasicResponseHandler();
               
@@ -187,6 +209,7 @@ public class MainActivity extends FragmentActivity implements OnTimeChangedListe
 protected void onPostExecute(Void result) {
 	// TODO Auto-generated method stub
 	super.onPostExecute(result);
+ 
 	String location ="BUET,DHAKA";
 	 
 	Location=location;
@@ -194,46 +217,83 @@ protected void onPostExecute(Void result) {
 		new GeocoderTask().execute(location);
 	}
 	
+   
+mUiHandler.postDelayed((new Runnable() {
 	
-try {
-	 ja =new JSONArray(response);
-	int n=ja.length();
-	int count=0;
-	for(int i=0;i<n;i++){
-		JSONObject jo=ja.optJSONObject(i);
-		if(jo.optString("asignee").equals(username))
-		{ 
-
-			position.add(jo.optString("Location"));
- 
-	String location2 =jo.optString("Location");
-	Location=location;
-	if(location2!=null && !location2.equals("")){
-		new GeocoderTask().execute(location2);
-	
-	}
- 
- 
-		}
-	}
-	b1.setOnClickListener(new OnClickListener() {
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
 		
-		@Override
-		public void onClick(View v) {
-			// TODO Auto-generated method stub
-			Log.d("data", ja.toString());
+		try {
+			 ja =new JSONArray(response);
+			 
+			int n=ja.length();
+			int count=0;
+			for(int i=0;i<n;i++){
+				JSONObject jo=ja.optJSONObject(i);
+				if(jo.optString("asignee").equals(username))
+				{ 
+				 
+					     
+					position.add(jo.optString("Location"));
+		  
+			String location2 =jo.optString("Location");
+			Log.d("location2", location2);
+			//Location=location;
+			if(location2!=null && !location2.equals("")){
+				new GeocoderTask().execute(location2);
 			
-
-			Intent intent = new Intent(MainActivity.this, TaskActivity.class);
-			intent.putExtra("data", ja.toString());
-			startActivity(intent);
+			}
+		 
+		 
+				}
+			}
+		
+		
+			b1.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					Log.d("data", ja.toString());
+					long temp=0;
+					int temp1=0;
+					
+					dist=new int[distance.size()];
+					
+					for (int l=0;l<distance.size();l++)
+					{	
+						for (int j=0;j<distance.size();j++)
+						{
+						if(distance.get(l)>distance.get(j))
+						{
+							temp=distance.get(l);
+							distance.put(l,distance.get(j));
+							distance.put(j,temp);
+							dist[l]=j;
+						}
+					
+					//Log.d(" "," "+dist[l]);
+					}
+						
+					}
+					for (int l=0;l<distance.size();l++)
+					{Log.d("pos"," "+dist[l]);
+						//Log.d("Distance"," "+distance.get(l));
+					}
+					Intent intent = new Intent(MainActivity.this, in.wptrafficanalyzer.locationgeocodingv2.TaskActivity.class);
+					intent.putExtra("data", ja.toString());
+					intent.putExtra("distance", dist);
+					startActivity(intent);
+				}
+			});
+			
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-	});
-	
-} catch (JSONException e) {
-	// TODO Auto-generated catch block
-	e.printStackTrace();
-}
+	}
+}),1500);
 }
       
             // Create a new HttpClient and Post Header
@@ -243,7 +303,20 @@ try {
 
     }	
 	
-	
+    public static long getDistanceMeters(double lat1, double lng1, double lat2, double lng2) {
+
+        double l1 = Math.toRadians(lat1);
+        double l2 = Math.toRadians(lat2);
+        double g1 = Math.toRadians(lng1);
+        double g2 = Math.toRadians(lng2);
+
+        double dist = Math.acos(Math.sin(l1) * Math.sin(l2) +Math.cos(l1) * Math.cos(l2) * Math.cos(g1 - g2));
+        if(dist < 0) {
+            dist = dist + Math.PI;
+        }
+
+        return Math.round(dist * 6378100);
+    }
 	
 	
 	
@@ -257,11 +330,16 @@ try {
 	
 	// An AsyncTask class for accessing the GeoCoding Web Service
 		private class GeocoderTask extends AsyncTask<String, Void, List<Address>>{
+@Override
+protected void onPreExecute() {
+// TODO Auto-generated method stub
+super.onPreExecute();
 
+}
 			@Override
 			protected List<Address> doInBackground(String... locationName) {
 				// Creating an instance of Geocoder class
-				Geocoder geocoder = new Geocoder(getBaseContext());
+				Geocoder geocoder = new Geocoder(getBaseContext(),Locale.getDefault());
 				List<Address> addresses = null;
 				
 				try {
@@ -269,78 +347,117 @@ try {
 					addresses = geocoder.getFromLocationName(locationName[0],3);
 				} catch (IOException e) {
 					e.printStackTrace();
-				}			
+				}		
+				
 				return addresses;
 			}
 			
 			
 			@Override
-			protected void onPostExecute(List<Address> addresses) {			
-				Log.d("locationName[0]", "locationName[0]");
-		        if(addresses==null || addresses.size()==0){
-					Toast.makeText(getBaseContext(), "No Location found", Toast.LENGTH_SHORT).show();
-				}
+			protected void onPostExecute(List<Address> addresses) {
+			 
+			 
+		 
+					 if(addresses==null || addresses.size()==0){
+							Toast.makeText(getBaseContext(), "No Location found", Toast.LENGTH_SHORT).show();
+						}
+					// TODO Auto-generated method stub
+				     googleMap.clear();
+						//if(addresses!=null)
+				        // Adding Markers on Google Map for each matching address
+						for(int i=0;i<addresses.size();i++){				
+							 
+							Address address = (Address) addresses.get(i);
+							if(address!= null){
+ 
+							    double longitude = address.getLongitude();	 
+							    double latitude = address.getLatitude();
+					        // Creating an instance of GeoPoint, to display in Google Map
+							      latLng = new LatLng(latitude, longitude);
+
+									//  Log.d("Distance1", " "+distance[0]);
+							}
+					    /*    String addres = addresses.get(0).getAddressLine(0);
+					        Log.d("addres", addres);
+					   // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+					        String city = addresses.get(0).getLocality();
+					        Log.d("city", city);
+					        String state = addresses.get(0).getAdminArea();
+					        Log.d("state", state);
+					        String country = addresses.get(0).getCountryName();
+					        Log.d("country", country);
+					        String postalCode = addresses.get(0).getPostalCode();
+					        Log.d("postalCode", postalCode);*/
+					    
+
+					        markerPoints.add(latLng);
+					      
+					       
+					     
+					     
+					     
+					   
+							//if(markerPoints.size()==1){
+								
+							//}
+							// Getting URL to the Google Directions API
+					   
+							 
+					
+					        // Locate the first location
+					        if(i==0)			        	
+								googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13.4f));
+					    	if(markerPoints.size() >= 2){	
+					    		 
+					    		LatLng	   origin=new LatLng( googleMap.getMyLocation().getLatitude(),  googleMap.getMyLocation().getLongitude());
+
+								 
+								//LatLng origin = markerPoints.get(0);
+								for(int j=1;j<markerPoints.size();j++)
+								{
+									LatLng dest = markerPoints.get(j);
+									if(!distance.containsValue(getDistanceMeters(origin.latitude,origin.longitude, dest.latitude, dest.longitude)))
+									{
+									 distance.put(k,getDistanceMeters(origin.latitude,origin.longitude, dest.latitude, dest.longitude));
+									k++;
+									}
+									//Log.d("Distance"," "+getDistanceMeters(origin.latitude,origin.longitude,dest.latitude, dest.longitude));
+ 
+
+									  markerOptions2.position(dest);
+							
+									 
+										markerOptions2.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+										markerOptions2.title("Task"+j); 
+										//  markerOptions2.title(addressText);
+										  googleMap.addMarker(markerOptions2);
+									// Getting URL to the Google Directions API
+										  
+												
+								 
+											String url = getDirectionsUrl(origin, dest);
+											// TODO Auto-generated method stub
+											DownloadTask downloadTask = new DownloadTask();
+											
+											// Start downloading json data from Google Directions API
+											downloadTask.execute(url);	
+										
+								
+								
+								}
+								
+							}
+							//downloadTask.execute(url);
+			
+						}		
+				 
+						
+					/*	Log.d("Distance1", " "+distance[0]);
+						Log.d("Distance2", " "+distance[1]);*/
+		       
 		        
 		        // Clears all the existing markers on the map
-		        googleMap.clear();
-				
-		        // Adding Markers on Google Map for each matching address
-				for(int i=0;i<addresses.size();i++){				
-					
-					Address address = (Address) addresses.get(i);
-					
-			        // Creating an instance of GeoPoint, to display in Google Map
-			        latLng = new LatLng(address.getLatitude(), address.getLongitude());
-			        
-			        String addressText = String.format("%s, %s",
-	                        address.getMaxAddressLineIndex() > 0 ? address.getAddressLine(0) : "",
-	                        address.getCountryName());
-
-			        markerPoints.add(latLng);
-			      
-			       
-			     
-			     
-			     
-			   
-					//if(markerPoints.size()==1){
-						
-					//}
-					// Getting URL to the Google Directions API
-			   
-					 
-				 
-			        // Locate the first location
-			        if(i==0)			        	
-						googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13.4f));
-			    	if(markerPoints.size() >= 2){	
-			    		 
-			    	 
-						  LatLng origin=new LatLng( googleMap.getMyLocation().getLatitude(),  googleMap.getMyLocation().getLongitude());
-						//LatLng origin = markerPoints.get(0);
-						for(int j=1;j<markerPoints.size();j++)
-						{
-							LatLng dest = markerPoints.get(j);
-							markerOptions2=new MarkerOptions();
-							  markerOptions2.position(dest);
-							  
-								markerOptions2.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-								   markerOptions2.title(addressText);
-								  googleMap.addMarker(markerOptions2);
-							// Getting URL to the Google Directions API
-							String url = getDirectionsUrl(origin, dest);				
-							
-							DownloadTask downloadTask = new DownloadTask();
-							
-							// Start downloading json data from Google Directions API
-							downloadTask.execute(url);
-						
-						}
-						
-					}
-					//downloadTask.execute(url);
-	
-				}			
+		   		
 			}		
 		}
 		private String getDirectionsUrl(LatLng origin,LatLng dest){
@@ -438,11 +555,15 @@ try {
 			@Override
 			protected void onPostExecute(String result) {			
 				super.onPostExecute(result);			
-				
-				ParserTask parserTask = new ParserTask();
-				
-				// Invokes the thread for parsing the JSON data
-				parserTask.execute(result);
+			 
+						// TODO Auto-generated method stub
+						ParserTask parserTask = new ParserTask();
+						
+						// Invokes the thread for parsing the JSON data
+						parserTask.execute(result);	
+				 
+			 
+			
 					
 			}		
 		}

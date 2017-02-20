@@ -12,16 +12,21 @@ AsyncHttpPost asyncHttpPost = new AsyncHttpPost(data);
 asyncHttpPost.execute("http://example.com");
 */
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +42,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 
+import com.google.android.gms.maps.SupportMapFragment;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,10 +55,11 @@ public class AdminActivity extends FragmentActivity implements View.OnClickListe
   public static TextView start, end;
   EditText title, location, asignee,id;
   Button creattask,updatetask,logout;
-  String update,creat;
+  String update,creat,Location;
   String date, time;
   int count = 0;
   HttpPost httppost;
+  LinearLayout lp;
   /**
    * ATTENTION: This was auto-generated to implement the App Indexing API.
    * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -68,6 +76,11 @@ public class AdminActivity extends FragmentActivity implements View.OnClickListe
   public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.task1);
+      Bundle extras = getIntent().getExtras();
+		if(extras != null) { 
+			Location=extras.getString("Location");
+		Log.d("Location", Location);
+		}
       id = (EditText) findViewById(R.id.id);
 
       start = (TextView) findViewById(R.id.start);
@@ -78,10 +91,22 @@ public class AdminActivity extends FragmentActivity implements View.OnClickListe
       creattask = (Button) findViewById(R.id.task);
       updatetask=(Button)findViewById(R.id.update);
       logout=(Button)findViewById(R.id.logout);
+      location.setOnTouchListener(new OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+	 
+			 Intent intent = new Intent(AdminActivity.this, in.wptrafficanalyzer.locationgeocodingv2.DialogActivity.class);
+	    	 
+	         startActivity(intent);
+			return false;
+		}
+	});
+      location.setText(Location);
       start.setOnTouchListener(new View.OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
-          showEditDialog(1);
+     showEditDialog(1);
 
           return false;
       }
@@ -99,7 +124,7 @@ public class AdminActivity extends FragmentActivity implements View.OnClickListe
           public void onClick(View view) {
               count++;
               creat="creat";
-              new MyAsyncTask().execute(creat,id.getText().toString(), start.getText().toString(), end.getText().toString(), title.getText().toString(), location.getText().toString(), asignee.getText().toString());
+              new MyAsyncTask().execute(creat,id.getText().toString(), start.getText().toString(), end.getText().toString(), title.getText().toString(), location.getText().toString(), asignee.getText().toString().replaceAll("\\s+",""));
           }
       });
       updatetask.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +132,7 @@ public class AdminActivity extends FragmentActivity implements View.OnClickListe
           public void onClick(View view) {
               count++;
               creat="update";
-              new MyAsyncTask().execute(creat,id.getText().toString(), start.getText().toString(), end.getText().toString(), title.getText().toString(), location.getText().toString(), asignee.getText().toString());
+              new MyAsyncTask().execute(creat,id.getText().toString(), start.getText().toString(), end.getText().toString(), title.getText().toString(), location.getText().toString(), asignee.getText().toString().replaceAll("\\s+",""));
           }
       });
       logout.setOnClickListener(new View.OnClickListener() {
@@ -198,9 +223,9 @@ public class AdminActivity extends FragmentActivity implements View.OnClickListe
               nameValuePairs.add(new BasicNameValuePair("asignee", valueIWantToSend[6]));
               DefaultHttpClient httpclient = new DefaultHttpClient();
               if(creat.equals("creat")){    httppost = new HttpPost(
-                      "http://192.168.0.149/insert.php");}
+                      "http://172.20.62.23/insert.php");}
             else if(creat.equals("update")){    httppost = new HttpPost(
-                      "http://192.168.0.149/update.php");}{}
+                      "http://172.20.62.23/update.php");}{}
               httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, HTTP.UTF_8));
 
               // Execute HTTP Post Request

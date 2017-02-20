@@ -46,7 +46,8 @@ public class TaskActivity extends Activity {
   ArrayList<String> tasklist=new  ArrayList<String>();
     int position=0;
     JSONObject jo;
-
+    int[] distance ;
+   
    String status = null;
    String id=null;
   /** Called when the activity is first created. */  
@@ -60,11 +61,21 @@ public class TaskActivity extends Activity {
     Button b1=(Button) findViewById(R.id.button1);
     Intent i= getIntent();
     String data=i.getExtras().getString("data");
-  id=i.getExtras().getString("id");
+    distance=i.getExtras().getIntArray ("distance");
+  //  Arrays.sort(distance);
+   
+    for (int l=0;l<distance.length;l++)
+	{	 
+		Log.d(" "," "+distance[l]);
+	}
+    id=i.getExtras().getString("id");
     status=i.getExtras().getString("Status");
 		Toast.makeText(getBaseContext(), status, Toast.LENGTH_SHORT).show();
     try {
 		  ja= new JSONArray(data);
+		 
+		  
+		  
 		//Toast.makeText(getBaseContext(), ja.toString(), Toast.LENGTH_SHORT).show();
 	} catch (JSONException e) {
 		// TODO Auto-generated catch block
@@ -79,10 +90,7 @@ public class TaskActivity extends Activity {
 	}*/
   
     // Create and populate a List of planet names.  
-    String[] planets = new String[] { "Mercury", "Venus", "Earth", "Mars",  
-                                      "Jupiter", "Saturn", "Uranus", "Neptune"};    
-    ArrayList<String> planetList = new ArrayList<String>();  
-    planetList.addAll( Arrays.asList(planets) );  
+    
       
     // Create ArrayAdapter using the planet list.  
     listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow)
@@ -144,7 +152,7 @@ public class TaskActivity extends Activity {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 				long arg3) {
 			position=arg2;
-			int tid=Integer.parseInt(task.get(arg2));
+			int tid=(distance[arg2]);
 			// TODO Auto-generated method stub
 			try {
 				  jo= ja.getJSONObject(tid);
